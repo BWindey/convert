@@ -21,6 +21,28 @@ const ConversionEntry[] CONVERSIONS = {
 	{ "ton", "ton", "ton", 1016.0469088, "kilogram" },
 };
 
+fn void usage(bool use_stderr) {
+	if (use_stderr) {
+		io::eprintn("Usage: metric <amount> <unit>");
+	} else {
+		io::printn("Usage: metric <amount> <unit>");
+	}
+}
+
+fn void help() {
+	io::print(" Convert imperial units to metric.\n ");
+	usage(use_stderr: false);
+	io::printn("\n Available units to convert:");
+	foreach (&entry : CONVERSIONS) {
+		io::printfn(
+			"   - % 5s | % 6s | % 3s",
+			entry.original_singular,
+			entry.original_plural,
+			entry.short_form
+		);
+	}
+}
+
 faultdef NOT_FOUND;
 fn ConversionEntry? find_conversion_entry(String original) {
 	// TODO: find best inexact match
@@ -55,9 +77,16 @@ fn int convert(String amount, String unit) {
 
 
 fn int main(String[] args) {
+	foreach (arg : args) {
+		if (arg == "-h" || arg == "--help") {
+			help();
+			return 0;
+		}
+	}
+
 	if (args.len != 3) {
 		io::eprintn("Expected 2 arguments.");
-		io::eprintn("Usage: metric <amount> <unit>");
+		usage(use_stderr: true);
 		return 1;
 	}
 
