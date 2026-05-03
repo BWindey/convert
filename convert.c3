@@ -1,24 +1,31 @@
 module metric;
 import std::io;
 
+alias ConversionFunction = fn double(double original);
+
+macro ConversionFunction @cst(double $rate) @const
+	=> fn double(double original) => $rate * original;
+
 struct ConversionEntry {
 	String original_singular;
 	String original_plural;
 	String short_form;
-	double to_other;
+	ConversionFunction conversion_function;
 	String other;
 }
 
 const ConversionEntry[] CONVERSIONS = {
 	// Distance
-	{ "inch", "inches", "in", 2.54, "centimeter" },
-	{ "foot", "feet", "ft", 0.3048, "meter" },
-	{ "yard", "yards", "yd", 0.9144, "meter" },
-	{ "mile", "miles", "mi", 1.609344, "kilometer" },
+	{ "inch", "inches", "in", @cst(2.54), "centimeter" },
+	{ "foot", "feet", "ft", @cst(0.3048), "meter" },
+	{ "yard", "yards", "yd", @cst(0.9144), "meter" },
+	{ "mile", "miles", "mi", @cst(1.609344), "kilometer" },
 	// Weight
-	{ "pound", "pounds", "lb", 0.45359237, "kilogram" },
-	{ "stone", "stone", "st", 6.35029318, "kilogram" },
-	{ "ton", "ton", "ton", 1016.0469088, "kilogram" },
+	{ "pound", "pounds", "lb", @cst(0.45359237), "kilogram" },
+	{ "stone", "stone", "st", @cst(6.35029318), "kilogram" },
+	{ "ton", "ton", "ton", @cst(1016.0469088), "kilogram" },
+	// Temperature
+	{ "fahrenheit", "fahrenheit", "F", fn double(double f) => (f - 32) / 1.8, "celsius" },
 };
 
 fn void usage(bool use_stderr) {
@@ -56,7 +63,7 @@ fn ConversionEntry? find_conversion_entry(String original) {
 }
 
 fn double? calculate_other(String amount, ConversionEntry conversion) {
-	return amount.to_double()! * conversion.to_other;
+	return conversion.conversion_function(amount.to_double())!;
 }
 
 fn int convert(String amount, String unit) {
