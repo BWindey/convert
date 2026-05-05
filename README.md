@@ -42,13 +42,15 @@ it out. I'll help by saying that the order in which they are defined is
 ```c3
 const ConversionEntry[] CONVERSIONS = {
 	// Distance
-	{ "inch", "inches", "in", 2.54, "centimeter" },
-	{ "foot", "feet", "ft", 0.3048, "meter" },
-	{ "yard", "yards", "yd", 0.9144, "meter" },
-	{ "mile", "miles", "mi", 1.609344, "kilometer" },
+	{ "inch", "inches", "in", ..., "centimeter" },
+	{ "foot", "feet", "ft", ..., "meter" },
+	{ "yard", "yards", "yd", ..., "meter" },
+	{ "mile", "miles", "mi", ..., "kilometer" },
 	// Weight
-	{ "pound", "pounds", "lb", 0.45359237, "kilogram" },
-	{ "stone", "stone", "st", 6.35029318, "kilogram" },
-	{ "ton", "ton", "ton", 1016.0469088, "kilogram" },
+	{ "pound", "pounds", "lb", ..., "kilogram" },
+	{ "stone", "stone", "st", ..., "kilogram" },
+	{ "ton", "ton", "ton", ..., "kilogram" },
+	// Temperature
+	{ "fahrenheit", "fahrenheit", "F", ..., "celsius" },
 };
 ```
