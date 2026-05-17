@@ -25,7 +25,7 @@ const ConversionEntry[] CONVERSIONS = {
 	{ "stone", "stone", "st", @cst(6.35029318), "kilogram" },
 	{ "ton", "ton", "ton", @cst(1016.0469088), "kilogram" },
 	// Temperature
-	{ "fahrenheit", "fahrenheit", "F", fn double(double f) => (f - 32) / 1.8, "celsius" },
+	{ "fahrenheit", "F", "f", fn double(double f) => (f - 32) / 1.8, "celsius" },
 };
 
 fn void usage(bool use_stderr) {
