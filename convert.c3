@@ -52,7 +52,6 @@ fn void help() {
 
 faultdef NOT_FOUND;
 fn ConversionEntry? find_conversion_entry(String original) {
-	// TODO: find best inexact match
 	foreach (ConversionEntry entry : CONVERSIONS) {
 		if (original == entry.original_singular) return entry;
 		if (original == entry.original_plural) return entry;
@@ -82,6 +81,21 @@ fn int convert(String amount, String unit) {
 	return 0;
 }
 
+faultdef PARSE_ERROR;
+
+fn void? try_split_arg(String arg, String* amount, String* unit) {
+	sz last_number_idx = 0;
+	foreach (sz idx, char c : arg) {
+		if (c >= '0' && c <= '9') last_number_idx = idx;
+	}
+	if (last_number_idx + 1 < arg.len) {
+		*amount = arg[:last_number_idx + 1];
+		*unit = arg[1 + last_number_idx..];
+	} else {
+		return PARSE_ERROR~;
+	}
+}
+
 
 fn int main(String[] args) {
 	foreach (arg : args) {
@@ -91,11 +105,19 @@ fn int main(String[] args) {
 		}
 	}
 
-	if (args.len != 3) {
-		io::eprintn("Expected 2 arguments.");
-		usage(use_stderr: true);
-		return 1;
+	String amount, unit @noinit;
+	switch (args.len) {
+		case 2:
+			// If only one arg was passed, try to split it into a number and a unit
+			if (catch try_split_arg(args[1], &amount, &unit)) nextcase default;
+		case 3:
+			amount = args[1];
+			unit = args[2];
+		default:
+			io::eprintn("Expected 2 arguments.");
+			usage(use_stderr: true);
+			return 1;
 	}
 
-	return convert(args[1], args[2]);
+	return convert(amount, unit);
 }
